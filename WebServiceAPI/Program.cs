@@ -81,8 +81,5 @@ app.MapPost("pay/{UserId}/{OrderId}", ([FromRoute] string UserId, [FromRoute] st
 
 app.MapGet("currency", () => Cart.ReturnCurrency());
 
-app.UseAuthentication();
-app.UseAuthorization();
-
 
 app.Run();

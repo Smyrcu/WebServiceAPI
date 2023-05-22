@@ -29,23 +29,6 @@ namespace WebServiceAPI.Controllers
             _config = config; ;
         }
 
-        [HttpPost("Register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register(string username, string password)
-        {
-            
-
-            if (!Membership.UserExists(username))
-            {
-                Membership.CreateUser(username, password);
-                Roles.AddUserToRole(username, "Member");
-
-                return Ok();
-            }
-
-            return BadRequest("User already exists.");
-        }
-
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(string username, string password)
