@@ -31,6 +31,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+app.MapGet("test", () => "Schludnie");
 
 app.MapPost("user/create", ([FromBody] UserModel model) =>
 {
