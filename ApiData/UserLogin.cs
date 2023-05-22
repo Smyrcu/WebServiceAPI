@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Security;
-using System.Web.UI.WebControls;
+using ApiData.Model;
 using Dapper;
-using Data.Model;
 
-namespace Data
+namespace ApiData
 {
     public static class UserLogin
     {
@@ -28,7 +26,7 @@ namespace Data
 
             connection.Open();
             var UserId = connection.QueryFirst<string>(sql2, parameters2);
-            
+
 
             var sql = "INSERT INTO UserExtraInfo (UserId, Name, Surname, BirthDate) VALUES (@UserId, @Name, @Surname, @BirthDate)";
             var parameters = new { UserId, model.Name, model.Surname, BirthDate = model.BirthDate.ToString("yyyy-MM-dd") };
@@ -41,5 +39,31 @@ namespace Data
         {
             return Membership.ValidateUser(model.Username, model.Password);
         }
+
+        public static bool UpdateUser(UserModel model)
+        {
+            var sql = @"UPDATE u set u.Name = @Name, u.BirthDate = @BirthDate, u.Surname = @Surname 
+                        from UserExtraInfo u where u.UserId = @UserId";
+            var parameters = new { model.Name, model.BirthDate, model.Surname, model.UserId };
+
+            var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            connection.Execute(sql, parameters);
+            connection.Close();
+
+            return true;
+        }
+
+        public static bool PlaceOrder(string UserId)
+        {
+            var sql = "Select * from CartItems where CustomerId = @UserId";
+            var parameters = new { UserId };
+            var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            var result = connection.Query<List<CartItemModel>>(sql, parameters);
+            connection.Close();
+            return result == null;
+        }
+        
     }
 }

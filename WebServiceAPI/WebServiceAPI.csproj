@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\test\test.csproj" />
+    <ProjectReference Include="..\ApiData\ApiData.csproj" />
   </ItemGroup>
 
 </Project>
