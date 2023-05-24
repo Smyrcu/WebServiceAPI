@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder();
@@ -33,6 +34,8 @@ var app = builder.Build();
 
 app.MapGet("test", () => "Schludnie");
 
+app.MapGet("test/curr", () => UserLogin.SaveCurrency());
+
 app.MapPost("user/create", ([FromBody] UserModel model) =>
 {
     return UserLogin.CreateUser(model);
@@ -48,7 +51,7 @@ app.MapPost("user/update", ([FromBody] UserModel model) =>
     return UserLogin.UpdateUser(model);
 });
 
-app.MapGet("products", ([FromQuery] string type ) =>
+app.MapGet("products/{type}", ([FromRoute] string type ) =>
 {
     return Product.GetProducts(type);
 });
@@ -65,14 +68,19 @@ app.MapPost("cart/remove", ([FromBody] CartItemModel model) =>
     Cart.RemoveFromCart(model);
 });
 
-app.MapPost("order/{UserId}", ([FromRoute] string UserId) =>
+app.MapGet("cart/{UserId}",([FromRoute] string UserId) =>
 {
-    UserLogin.PlaceOrder(UserId);
+    Cart.GetCartItems(UserId);
+});
+
+app.MapPost("order/placeOrder", ([FromBody] PlaceOrderModel model) =>
+{
+    Product.PlaceOrder(model);
 });
 
 app.MapGet("user/history/{UserId}", ([FromRoute] string UserId) =>
 {
-
+    Product.GetOrderHistory(UserId);
 });
 
 app.MapPost("pay/{UserId}/{OrderId}", ([FromRoute] string UserId, [FromRoute] string OrderId) =>

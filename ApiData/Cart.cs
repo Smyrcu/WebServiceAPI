@@ -14,7 +14,7 @@ namespace ApiData
     public static class Cart
     {
         private static string _connectionString =
-            "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=True;";
+            "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=False;";
         public static void AddToCart(CartItemModel item)
         {
             var sql =
@@ -44,6 +44,17 @@ namespace ApiData
             var result = connection.Query<Currency>(sql).ToList();
             connection.Close();
             return result;
+        }
+
+        public static List<CartItemModel> GetCartItems(string UserId)
+        {
+            var sql = "Select * from CartItems where CustomerId = @UserId";
+            var parameters = new { UserId };
+            var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            var result = connection.Query<CartItemModel>(sql, parameters);
+            connection.Close();
+            return result.ToList();
         }
     }
 }

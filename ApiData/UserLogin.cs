@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Security;
 using ApiData.Model;
 using Dapper;
+using Newtonsoft.Json;
+using static System.Net.WebRequestMethods;
 
 namespace ApiData
 {
     public static class UserLogin
     {
         private static string _connectionString =
-            "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=True;";
+            "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=False;";
         public static string CreateUser(UserModel model)
         {
             Membership.CreateUser(model.Username, model.Password, model.Email);
@@ -54,16 +57,32 @@ namespace ApiData
             return true;
         }
 
-        public static bool PlaceOrder(string UserId)
+        public static void SaveCurrency()
         {
-            var sql = "Select * from CartItems where CustomerId = @UserId";
-            var parameters = new { UserId };
+            CurrencyResponse result;
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://api.nbp.pl/api/exchangerates/");
+
+                var response = client.GetAsync("tables/A").Result;
+                var res = response.Content.ReadAsStringAsync().Result;
+                var resList = JsonConvert.DeserializeObject<List<CurrencyResponse>>(res);
+                result = resList[0];
+            }
             var connection = new SqlConnection(_connectionString);
             connection.Open();
-            var result = connection.Query<List<CartItemModel>>(sql, parameters);
+            foreach (var rate in result.rates)
+            {
+                var sql = "INSERT INTO Currency (currencyCode, currencyRate) VALUES (@code, @mid)";
+
+                var parameters = new { rate.code, rate.mid };
+                connection.Execute(sql, parameters);
+            }
             connection.Close();
-            return result == null;
+
         }
+
+       
         
     }
 }
