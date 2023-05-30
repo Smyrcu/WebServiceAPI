@@ -67,7 +67,7 @@ namespace ApiData
             var response = connection.Query<CustomerOrder>(sql, parameters).ToList();
             foreach (var order in response)
             {
-                var sql2 = "SELECT coi.ProductId, coi.Qty FROM CustomerOrderItem coi where coi.CustomerOrderId = @Id";
+                var sql2 = "SELECT coi.ProductId, coi.Qty FROM CustomerOrderItem coi where coi.CustomerOrderId = @UserId";
                 var parameters2 = new { UserId };
                 var productList = connection.Query<CartItemModel>(sql2, parameters2).ToList();
                 result.Add(new OrderHistoryModel
