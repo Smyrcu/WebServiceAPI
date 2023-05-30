@@ -10,32 +10,28 @@ namespace ApiData
 {
     public static class UserLogin
     {
-        private static string _connectionString =
-            "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=False;";
+        private const string ConnectionString = "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=False;";
+
         public static string CreateUser(UserModel model)
         {
-            //Test.Testowa();
-            //Membership.CreateUser(model.Username, model.Password, model.Email);
             var createSql = "INSERT INTO Users (UserName, Password, Email) VALUES (@Username, @Password, @Email)";
             var createParameters = new {model.Username, model.Password, model.Email};
             
             var sql2 = "Select UserId from Users where Username = @User";
             var parameters2 = new { User = model.Username };
 
-            var connection = new SqlConnection(_connectionString);
+            var connection = new SqlConnection(ConnectionString);
 
             connection.Open();
             connection.Execute(createSql, createParameters);
-            var UserId = connection.QueryFirst<string>(sql2, parameters2);
+            var userId = connection.QueryFirst<string>(sql2, parameters2);
 
 
-            var sql = "INSERT INTO UserExtraInfo (UserId, Name, Surname, BirthDate) VALUES (@UserId, @Name, @Surname, @BirthDate)";
-            var parameters = new { UserId, model.Name, model.Surname, BirthDate = model.BirthDate.ToString("yyyy-MM-dd") };
+            var sql = "INSERT INTO UserExtraInfo (UserId, Name, Surname, BirthDate) VALUES (@userId, @Name, @Surname, @BirthDate)";
+            var parameters = new { UserId = userId, model.Name, model.Surname, BirthDate = model.BirthDate.ToString("yyyy-MM-dd") };
             connection.Execute(sql, parameters);
             connection.Close();
-            //Roles.AddUserToRole(model.Username, "User");
-            return UserId;
-           //return "Schludnie kurwa";
+            return userId;
         }
 
         public static int? LoginUser(LoginModel model)
@@ -43,12 +39,12 @@ namespace ApiData
             var sql = "SELECT UserId FROM Users WHERE UserName = @Username AND Password = @Password";
             var parameters = new { model.Username, model.Password };
 
-            var connection = new SqlConnection(_connectionString);
+            var connection = new SqlConnection(ConnectionString);
             connection.Open();
-            var UserId = connection.QueryFirstOrDefault<int>(sql, parameters);
+            var userId = connection.QueryFirstOrDefault<int>(sql, parameters);
             connection.Close();
             
-            return UserId; //ValidateUser(model.Username, model.Password);
+            return userId; //ValidateUser(model.Username, model.Password);
         }
 
         public static bool UpdateUser(UserModel model)
@@ -57,7 +53,7 @@ namespace ApiData
                         from UserExtraInfo u where u.UserId = @UserId";
             var parameters = new { model.Name, model.BirthDate, model.Surname, model.UserId };
 
-            var connection = new SqlConnection(_connectionString);
+            var connection = new SqlConnection(ConnectionString);
             connection.Open();
             connection.Execute(sql, parameters);
             connection.Close();
@@ -70,14 +66,14 @@ namespace ApiData
             CurrencyResponse result;
             using (HttpClient client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://api.nbp.pl/api/exchangerates/");
+                client.BaseAddress = new Uri("https://api.nbp.pl/api/exchangerates/");
 
                 var response = client.GetAsync("tables/A").Result;
                 var res = response.Content.ReadAsStringAsync().Result;
                 var resList = JsonConvert.DeserializeObject<List<CurrencyResponse>>(res);
                 result = resList[0];
             }
-            var connection = new SqlConnection(_connectionString);
+            var connection = new SqlConnection(ConnectionString);
             connection.Open();
             foreach (var rate in result.rates)
             {
