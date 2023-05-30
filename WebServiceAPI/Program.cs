@@ -67,7 +67,7 @@ app.MapPost("cart/remove", ([FromBody] CartItemModel model) =>
 
 app.MapGet("cart/{UserId}",([FromRoute] string UserId) =>
 {
-    Cart.GetCartItems(UserId);
+    return Cart.GetCartItems(UserId);
 });
 
 app.MapPost("order/placeOrder", ([FromBody] PlaceOrderModel model) =>
@@ -77,7 +77,7 @@ app.MapPost("order/placeOrder", ([FromBody] PlaceOrderModel model) =>
 
 app.MapGet("user/history/{UserId}", ([FromRoute] string UserId) =>
 {
-    Product.GetOrderHistory(UserId);
+    return Product.GetOrderHistory(UserId);
 });
 
 app.MapPost("pay/{UserId}/{OrderId}", ([FromRoute] string UserId, [FromRoute] string OrderId) =>
