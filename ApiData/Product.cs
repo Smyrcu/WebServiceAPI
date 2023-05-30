@@ -44,7 +44,7 @@ namespace ApiData
             var sql3 =
                 "INSERT INTO CustomerOrderItem (CustomerOrderId, ProductId, Qty) VALUES (@CustomerOrderId, @ProductId, @Qty)";
             connection.Open();
-            var CustomerOrderId = connection.Execute(sql2);
+            var CustomerOrderId = connection.Query<int>(sql2);
             connection.Execute(sql, parameters);
             foreach (var cartItemModel in model.CartItemModel)
             {

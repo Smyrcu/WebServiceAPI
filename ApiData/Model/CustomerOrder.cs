@@ -9,7 +9,7 @@ namespace ApiData.Model
     public class CustomerOrder
     {
         public int Id { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string ShippingCity { get; set; }
         public string ShippingPostalNumber { get; set; }
         public string ShippingCountry { get; set;}
