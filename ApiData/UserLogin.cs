@@ -11,6 +11,7 @@ using ApiData.Model;
 using Dapper;
 using Newtonsoft.Json;
 using static System.Net.WebRequestMethods;
+using static System.Web.Security.Membership;
 
 namespace ApiData
 {
@@ -20,27 +21,41 @@ namespace ApiData
             "Server=51.38.135.127,49170;Database=Mennica;User Id=sa;Password=Nie!Mam.Pomyslu#;Trusted_Connection=False;";
         public static string CreateUser(UserModel model)
         {
-            Membership.CreateUser(model.Username, model.Password, model.Email);
-
-            var sql2 = "Select UserId from aspnet_Users where Username = @User";
+            //Test.Testowa();
+            //Membership.CreateUser(model.Username, model.Password, model.Email);
+            var createSql = "INSERT INTO Users (UserName, Password, Email) VALUES (@Username, @Password, @Email)";
+            var createParameters = new {model.Username, model.Password, model.Email};
+            
+            var sql2 = "Select UserId from Users where Username = @User";
             var parameters2 = new { User = model.Username };
 
             var connection = new SqlConnection(_connectionString);
 
             connection.Open();
+            connection.Execute(createSql, createParameters);
             var UserId = connection.QueryFirst<string>(sql2, parameters2);
 
 
             var sql = "INSERT INTO UserExtraInfo (UserId, Name, Surname, BirthDate) VALUES (@UserId, @Name, @Surname, @BirthDate)";
             var parameters = new { UserId, model.Name, model.Surname, BirthDate = model.BirthDate.ToString("yyyy-MM-dd") };
-
-            Roles.AddUserToRole(model.Username, "User");
+            connection.Execute(sql, parameters);
+            connection.Close();
+            //Roles.AddUserToRole(model.Username, "User");
             return UserId;
+           //return "Schludnie kurwa";
         }
 
-        public static bool LoginUser(LoginModel model)
+        public static int? LoginUser(LoginModel model)
         {
-            return Membership.ValidateUser(model.Username, model.Password);
+            var sql = "SELECT UserId FROM Users WHERE UserName = @Username AND Password = @Password";
+            var parameters = new { model.Username, model.Password };
+
+            var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            var UserId = connection.QueryFirstOrDefault<int>(sql, parameters);
+            connection.Close();
+            
+            return UserId; //ValidateUser(model.Username, model.Password);
         }
 
         public static bool UpdateUser(UserModel model)

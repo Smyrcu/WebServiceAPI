@@ -36,10 +36,7 @@ app.MapGet("test", () => "Schludnie");
 
 app.MapGet("test/curr", () => UserLogin.SaveCurrency());
 
-app.MapPost("user/create", ([FromBody] UserModel model) =>
-{
-    return UserLogin.CreateUser(model);
-});
+app.MapPost("user/create", UserLogin.CreateUser);
 
 app.MapPost("user/login", ([FromBody] LoginModel model) =>
 {
