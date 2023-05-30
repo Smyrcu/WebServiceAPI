@@ -36,7 +36,7 @@ namespace ApiData
             {
                 model.CustomerOrder.UserId, model.CustomerOrder.ShippingCity, model.CustomerOrder.ShippingPostalNumber,
                 model.CustomerOrder.ShippingCountry,
-                ShippingAddress = model.CustomerOrder.ShippingAdress, model.CustomerOrder.PaymentId,
+                model.CustomerOrder.ShippingAdress, model.CustomerOrder.PaymentId,
                 model.CustomerOrder.ShippingMethodId, model.CustomerOrder.Price
             };
             var connection = new SqlConnection(_connectionString);
