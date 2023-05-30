@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Net.Http;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Security;
 using ApiData.Model;
 using Dapper;
 using Newtonsoft.Json;
-using static System.Net.WebRequestMethods;
-using static System.Web.Security.Membership;
 
 namespace ApiData
 {
