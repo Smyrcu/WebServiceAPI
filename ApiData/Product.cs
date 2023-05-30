@@ -17,7 +17,7 @@ namespace ApiData
         public static List<ProductModel> GetProducts(string type = null)
         {
             var sql =
-                "Select Id, Name, EAN, Price, Description, StockQty, InStock, Category, Type from Products where (@type = null or Type = @type)";
+                "Select Id, Name, EAN, Price, Description, StockQty, InStock, Category, Type from Products where (coalesce(@type, '') = '' or Type = @type)";
             var parameters = new { type };
 
             var connection = new SqlConnection(_connectionString);
