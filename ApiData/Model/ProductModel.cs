@@ -15,7 +15,7 @@ namespace ApiData.Model
         public string Description { get; set; }
         public int StockQty { get; set; }
         public bool InStock { get; set; }
-        public int Category { get; set; }
+        public string Category { get; set; }
         public string Type{ get; set; }
 
     }
