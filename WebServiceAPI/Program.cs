@@ -53,14 +53,14 @@ app.MapGet("products/{type}", ([FromRoute] string type ) =>
     return Product.GetProducts(type);
 });
 
-app.MapGet("products", () => Product.GetProducts());
+    app.MapGet("products", () => Product.GetProducts());
 
 app.MapPost("cart/add", ([FromBody] CartItemModel model) =>
 {
     Cart.AddToCart(model);
 });
 
-app.MapPost("cart/remove", ([FromBody] CartItemModel model) =>
+app.MapDelete("cart/remove", ([FromBody] CartItemModel model) =>
 {
     Cart.RemoveFromCart(model);
 });

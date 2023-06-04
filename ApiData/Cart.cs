@@ -38,7 +38,7 @@ namespace ApiData
 
         public static List<Currency> ReturnCurrency()
         {
-            var sql = "Select currencyCode, currencyRate from Currency";
+            var sql = "Select Id ,currencyCode, currencyRate from Currency";
             var connection = new SqlConnection(_connectionString);
             connection.Open();
             var result = connection.Query<Currency>(sql).ToList();

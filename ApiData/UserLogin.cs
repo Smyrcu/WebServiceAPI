@@ -44,14 +44,14 @@ namespace ApiData
             var userId = connection.QueryFirstOrDefault<int>(sql, parameters);
             connection.Close();
             
-            return userId; //ValidateUser(model.Username, model.Password);
+            return userId;
         }
 
         public static bool UpdateUser(UserModel model)
         {
             var sql = @"UPDATE u set u.Name = @Name, u.BirthDate = @BirthDate, u.Surname = @Surname 
                         from UserExtraInfo u where u.UserId = @UserId";
-            var parameters = new { model.Name, model.BirthDate, model.Surname, model.UserId };
+            var parameters = new { model.Name, BirthDate = model.BirthDate.ToString("yyyy-MM-dd"), model.Surname, model.UserId };
 
             var connection = new SqlConnection(ConnectionString);
             connection.Open();
